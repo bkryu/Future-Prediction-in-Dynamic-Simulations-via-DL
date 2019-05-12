@@ -52,7 +52,7 @@ Each .lammpstrj used contains two snapshots in a single file, with 200000 timest
 
 The number of particles can vary significantly depending on the goal of simulation and 1 million particles is commonly used for massively parallelized simulations. Here, I choose a constant (8788) number of particles to limit unnecessary computational work in developing and testing various architectures.
 
-The data set contains 14,400 .lammpstrj snapshots, generated from 200 independent simulations at 72 different time points (200\times72=14,400). The dataset is divded into training, dev, and test sets as:
+The data set contains 14,400 .lammpstrj snapshots, generated from 200 independent simulations at 72 different time points (200$\times$72=14,400). The dataset is divded into training, dev, and test sets as:
 * Train: 12,000
 * Dev: 1,200
 * Test: 1,200
