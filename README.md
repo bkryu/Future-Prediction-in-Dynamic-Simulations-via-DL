@@ -19,7 +19,7 @@ Detailed description can be viewed at the Appendix
 
 
 ## Description of Data Set
-[LAMMPS][LAMMPS] (Large-scale Atomic/Molecular Massively Parallel Simulator) is an open-source molecular dynamics software that widely used for scientific research. LAMMPS "trajectory files" (.lammpstrj), which are used as inputs and outputs (labels) in this project, are simulation "snapshots" containing information to a current simulation system. These trajectory files typically contain the following information:
+[LAMMPS][LAMMPS] (Large-scale Atomic/Molecular Massively Parallel Simulator) is an open-source molecular dynamics software that widely used for scientific research. LAMMPS "trajectory files" (.lammpstrj), which are used as inputs and outputs for the neural networks of this project, are simulation "snapshots" containing information to a current simulation system. These trajectory files typically contain the following information:
 * Number of atoms/particles in simulation box/system
 * Dimensions of simulation box
 * Current timestep of simulation
@@ -28,7 +28,7 @@ Detailed description can be viewed at the Appendix
 * Linear and angular velocities of each atom/particle
 * Charge, dipole moment, and etc. information pertaining to each particle
 
-For this project, I will use minimal trajectory files only containing particle ID's types, and positions (x,y,z). The first several lines look like the following:
+For this project, I will use minimal trajectory files only containing particle IDs, types, and positions (x,y,z). The first several lines look like the following:
 
 ```
 ITEM: TIMESTEP
@@ -48,11 +48,11 @@ ITEM: ATOMS id type xu yu zu
 ...
 ...
 ```
-Each .lammpstrj used contains two snapshots in a single file, with 200000 timesteps separated apart.
+Each .lammpstrj file contains two snapshots in a single file that are used as inputs and labels, and are 200000 timesteps separated apart.
 
 The number of particles can vary significantly depending on the goal of simulation and 1 million particles is commonly used for massively parallelized simulations. Here, I choose a constant (8788) number of particles to limit unnecessary computational work in developing and testing various architectures.
 
-The data set contains 14,400 .lammpstrj snapshots, generated from 200 independent simulations at 72 different time points (200$\times$72=14,400). The dataset is divded into training, dev, and test sets as:
+The data set contains 14,400 .lammpstrj snapshots, generated from 200 independent simulations at 72 different time points (200x72=14,400). The dataset is divded into training, dev, and test sets as:
 * Train: 12,000
 * Dev: 1,200
 * Test: 1,200
@@ -75,7 +75,10 @@ python ./train.py [Training set directory] [Model File Name to Save]
 ```
 The training script loads the data, trains the model, and saves the trained model as an hdf5 format to the file name specified. The directory of the training data set (identical as [Data directory] from preprocessing), and the model file name (e.g. myModel.h5) must be spciefied.
 
-As of now, the current model to train is: ____
+As of now, the current model are:
+* FC1: One fully connected hidden layer with 5,000 units.
+* FC5: Five fully connected hidden layers with 5,000, 4,000, 3,000, 4,000 and 5,000 units.
+* ResNet1: A network with one residual block, containing four fully connected layers with 5,000, 4,000, 4,000, and 5,000 units in each layer.
 
 ## Testing
 The testing script is run via
