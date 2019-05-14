@@ -3,7 +3,7 @@ CS230 Spring 2019 Final Project
 
 Author: Brian K. Ryu
 
-Note: Smaller data set wit
+Note: Only one data file is currently uploaded, inside ./One/
 
 ## Requirements
 This code was developed using default settings for the Amazon AWS Deep Learning AMI (Ubuntu) Version 22.0 - ami-01a4e5be5f289dd12
