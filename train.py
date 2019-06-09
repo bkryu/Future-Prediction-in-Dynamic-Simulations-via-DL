@@ -6,7 +6,7 @@ import sys
 import tensorflow as tf
 import time
 from tensorflow.keras import layers
-from tensorflow.keras.layers import Input, Dense, Conv1D, Flatten
+from tensorflow.keras.layers import Input, Dense, Conv2D, Flatten, Reshape
 from tensorflow.keras.models import Model
 
 # Remove hidden files from a list of files.
@@ -25,6 +25,203 @@ def removeHiddenFiles(list_files):
 		else:
 			break
 
+def Fc1Layer(flatX):
+	X = Dense(5000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(flatX)
+	X = Dense(26364, activation="linear")(X)
+	return X
+
+def Fc5Layer(flatX):
+	X = Dense(4000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(flatX)
+	X = Dense(3000, activation="tanh", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(2000, activation="tanh", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(3000, activation="tanh", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(4000, activation="tanh", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	return X
+
+def ResNet1Layer(flatX):
+	X = Dense(4000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(flatX)
+	X = Dense(3000, activation="tanh", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(3000, activation="tanh", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(4000, activation="tanh", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X = tf.keras.layers.add([flatX, X])
+	return X
+
+def ResNet3Layer(flatX):
+	X = Dense(4000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(flatX)
+	X = Dense(4000, activation="tanh", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X = tf.keras.layers.add([flatX, X])
+
+	X = Dense(3000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(3000, activation="tanh", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X = tf.keras.layers.add([flatX, X])
+
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(2000, activation="tanh", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X = tf.keras.layers.add([flatX, X])
+
+	return X
+
+def DenseNet5Layer(flatX): #  MSE = 2.4782e-05 for 60 epochs 
+	X = Dense(3000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(flatX)
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X = tf.keras.layers.add([flatX, X])
+
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X = tf.keras.layers.add([flatX, X])
+
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(500, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(500, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X = tf.keras.layers.add([flatX, X])
+
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X = tf.keras.layers.add([flatX, X])
+
+	X = Dense(3000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X = tf.keras.layers.add([flatX, X])
+
+	return X
+
+def ResNet5Layer(flatX): #  MSE = 2.4784e-05 for 60 epochs 
+	X = Dense(3000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(flatX)
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X1 = tf.keras.layers.add([flatX, X])
+
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X1)
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X2 = tf.keras.layers.add([X1, X])
+
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X2)
+	X = Dense(500, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(500, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X3 = tf.keras.layers.add([X2, X])
+
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X3)
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X4 = tf.keras.layers.add([X3, X])
+
+	X = Dense(3000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X4)
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X5 = tf.keras.layers.add([X4, X])
+	
+	return X5
+
+def DenseNet7Layer(flatX): #  MSE = 2.4788e-05 for 60 epochs  
+	X = Dense(3000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(flatX)
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X = tf.keras.layers.add([flatX, X])
+
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X = tf.keras.layers.add([flatX, X])
+
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(500, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(500, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X = tf.keras.layers.add([flatX, X])
+
+	X = Dense(800, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(400, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(400, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X = tf.keras.layers.add([flatX, X])
+
+	X = Dense(800, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(400, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(400, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X = tf.keras.layers.add([flatX, X])
+
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X = tf.keras.layers.add([flatX, X])
+
+	X = Dense(3000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X = tf.keras.layers.add([flatX, X])
+
+	return X
+
+def ResNet7Layer(flatX): #  MSE = 2.4785e-05 for 60 epochs 
+	X = Dense(3000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(flatX)
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X1 = tf.keras.layers.add([flatX, X])
+
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X1)
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X2 = tf.keras.layers.add([X1, X])
+
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X2)
+	X = Dense(500, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(500, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X3 = tf.keras.layers.add([X2, X])
+
+	X = Dense(800, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X3)
+	X = Dense(400, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(400, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X4 = tf.keras.layers.add([X3, X])
+
+	X = Dense(800, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X4)
+	X = Dense(400, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(400, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X5 = tf.keras.layers.add([X4, X])
+
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X5)
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(1000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X6 = tf.keras.layers.add([X5, X])
+
+	X = Dense(3000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X6)
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(2000, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(l=lambd))(X)
+	X = Dense(26364, activation="linear")(X)
+	X7 = tf.keras.layers.add([X6, X])
+	
+	return X7
+
 # Check for correct input
 if len(sys.argv) < 3:
 	print("Usage:")
@@ -33,10 +230,10 @@ if len(sys.argv) < 3:
 
 
 ### Some hyperparameters are defined here
-learningRate = 0.005
-lambd = 0.1
+learningRate = 5e-6
+lambd = 0.0000
 numEpochs = 60
-batchSize = 256
+batchSize = 512
 ###
 
 print("TensorFlow Version: " + tf.__version__)
@@ -79,7 +276,6 @@ if len(sys.argv)==4:
 	tDataPath = tPath + 'data/'
 	tLabelPath = tPath + 'label/'
 
-	# print('Test File Path: ' + tPath)
 	tData_list = os.listdir(tDataPath)
 	tLabel_list = os.listdir(tLabelPath)
 
@@ -91,88 +287,30 @@ if len(sys.argv)==4:
 		test_data = np.load(tDataPath + tData_list[0])
 		test_labels = np.load(tLabelPath + tLabel_list[0])
 
-	# test_data = np.reshape(test_data,(numTestFiles, test_data.shape[1]*test_data.shape[2]))
 	test_labels = np.reshape(test_labels,(test_labels.shape[0],test_labels.shape[1]*test_labels.shape[2]))
 
-
-### Models defined here ###
-## 1. Naive one hidden fc layer model ##
 inputLayer = Input(shape=(8788,3))
 fl1 = Flatten()(inputLayer)
-fc1 = Dense(5000, activation="relu")(fl1) # Hidden fc layer
-outputLayer = Dense(26364, activation="linear")(fc1)
 
-currModel = Model(inputs=inputLayer, outputs=outputLayer)
+#### REPLACE MODEL HERE ####
+X = ResNet7Layer(fl1) # Hidden fc layer
+############################
+
+currModel = Model(inputs=inputLayer, outputs=X)
 currModel.compile(optimizer = tf.train.AdamOptimizer(learning_rate = learningRate),
               loss = 'mse',
-              metrics=['accuracy', 'mse', 'mae'])
+              metrics=['mse', 'mae'])
+if len(sys.argv)==4:
+	history = currModel.fit(data_file, label_file, epochs=numEpochs, batch_size=batchSize, validation_data=(test_data, test_labels))
+else:
+	history = currModel.fit(data_file, label_file, epochs=numEpochs, batch_size=batchSize)
 
-history = currModel.fit(data_file, label_file, epochs=numEpochs, batch_size=batchSize, validation_data=(test_data, test_labels))
+
 hist_df = pd.DataFrame(history.history) 
-hist_csv_file = 'FC1_' + 'history.csv'
+hist_csv_file = 'Res7_' + 'history.csv'
 with open(hist_csv_file, mode='w') as f:
     hist_df.to_csv(f)
-
-
-modelPathCurr = "FC1_" + modelPath
-print("Saving model as: " + modelPathCurr)
-currModel.save(modelPathCurr)
-print("Clearing current model for next model...")
-tf.keras.backend.clear_session()
-del currModel, history, hist_df
-
-## 2. Five hidden fc layer model ##
-inputLayer = Input(shape=(8788,3))
-fl1 = Flatten()(inputLayer)
-fc1 = Dense(5000, activation="relu")(fl1)
-fc2 = Dense(4000, activation="tanh")(fc1)
-fc3 = Dense(3000, activation="tanh")(fc2)
-fc4 = Dense(4000, activation="tanh")(fc3)
-fc5 = Dense(5000, activation="tanh")(fc4)
-outputLayer = Dense(26364, activation="linear")(fc5)
-
-currModel = Model(inputs=inputLayer, outputs=outputLayer)
-currModel.compile(optimizer = tf.train.AdamOptimizer(learning_rate = learningRate),
-              loss = 'mse',
-              metrics=['accuracy', 'mse', 'mae'])
-
-history = currModel.fit(data_file, label_file, epochs=numEpochs, batch_size=batchSize, validation_data=(test_data, test_labels))
-hist_df = pd.DataFrame(history.history) 
-hist_csv_file = 'FC5_' + 'history.csv'
-with open(hist_csv_file, mode='w') as f:
-    hist_df.to_csv(f)
-
-
-modelPathCurr = "FC5_" + modelPath
-print("Saving model as: " + modelPathCurr)
-currModel.save(modelPathCurr)
-print("Clearing current model for next model...")
-tf.keras.backend.clear_session()
-del currModel, history, hist_df
-
-## 3. One ResNet Identity Block ##
-inputLayer = Input(shape=(8788,3))
-fl1 = Flatten()(inputLayer)
-fc1 = Dense(5000, activation="relu")(fl1)
-fc2 = Dense(4000, activation="tanh")(fc1)
-fc3 = Dense(4000, activation="tanh")(fc2)
-fc4 = Dense(5000, activation="tanh")(fc3)
-fcLast = Dense(26364, activation="linear")(fc4)
-outputLayer = tf.keras.layers.add([fl1, fcLast])
-
-currModel = Model(inputs=inputLayer, outputs=outputLayer)
-currModel.compile(optimizer = tf.train.AdamOptimizer(learning_rate = learningRate),
-              loss = 'mse',
-              metrics=['accuracy', 'mse', 'mae'])
-
-history = currModel.fit(data_file, label_file, epochs=numEpochs, batch_size=batchSize, validation_data=(test_data, test_labels))
-hist_df = pd.DataFrame(history.history) 
-hist_csv_file = 'ResNet1_' + 'history.csv'
-with open(hist_csv_file, mode='w') as f:
-    hist_df.to_csv(f)
-
-
-modelPathCurr = "ResNet1_" + modelPath
+modelPathCurr = "Res7_" + modelPath
 print("Saving model as: " + modelPathCurr)
 currModel.save(modelPathCurr)
 print("Clearing current model for next model...")
