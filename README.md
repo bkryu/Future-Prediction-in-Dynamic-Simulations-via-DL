@@ -1,5 +1,6 @@
 # Future Prediction in Brownian Dynamics Simulations Using Deep Neural Networks
 CS230 Spring 2019 Final Project
+Last Updated 06/09/2019
 
 Author: Brian K. Ryu
 
@@ -71,14 +72,19 @@ Note that since the particle positions are sorted by particle ID, the particle I
 ## Training
 The training script is run via
 ```
-python ./train.py [Training set directory] [Model File Name to Save]
+python ./train.py [Training set directory] [Model File Name to Save] {Dev set directory}
 ```
-The training script loads the data, trains the model, and saves the trained model as an hdf5 format to the file name specified. The directory of the training data set (identical as [Data directory] from preprocessing), and the model file name (e.g. myModel.h5) must be spciefied.
+The training script loads the data, trains the model, and saves the trained model as an hdf5 format to the file name specified. The directory of the training data set (identical as [Data directory] from preprocessing), and the model file name (e.g. myModel.h5) must be specified.
+
+Optionally adding a Dev set directory allows computation of cross-validation error that is computed with the dev set that was not used to train the model.
 
 As of now, the current model are:
 * FC1: One fully connected hidden layer with 5,000 units.
-* FC5: Five fully connected hidden layers with 5,000, 4,000, 3,000, 4,000 and 5,000 units.
-* ResNet1: A network with one residual block, containing four fully connected layers with 5,000, 4,000, 4,000, and 5,000 units in each layer.
+* FC5: Five fully connected hidden layers with 4,000, 3,000, 2,000, 3,000 and 4,000 units.
+* ResNet1: A network with one residual block, containing four fully connected layers with 4,000, 3,000, 3,000, and 4,000 units in each layer.
+* ResNet3: A network with three residual blocks, containing four fully connected layers.
+* ResNet5: A network with five residual blocks, containing four fully connected layers.
+* ResNet7: A network with seven residual blocks, containing four fully connected layers.
 
 ## Testing
 The testing script is run via
